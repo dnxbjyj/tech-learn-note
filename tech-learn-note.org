@@ -1,0 +1,50 @@
+* Tools
+** git
+*** 多个github账号共存的配置
+假设有2个github账号： ~mygit1@gmail.com~ 和 ~mygit2@gmail.com~ ，想要同时在同一个电脑上同时管理这两个账号下的仓库。方法如下：
+- 打开git bash命令行，cd到~/.ssh目录下，分别执行如下命令生成秘钥：
+#+BEGIN_SRC sh
+  ssh-keygen -t rsa -C "mygit1@gmail.com"
+  ssh-keygen -t rsa -C "mygit2@gmail.com"
+#+END_SRC
+注：在生成mygit1和mygit2的秘钥时，第一步输入文件名为： ~id_rsa_mygit1~ 和 ~id_rsa_mygit2~ ，并且后面两步不要输入密码（保持为空）。
+- 把生成的两个账号的公钥内容（.pub后缀的文件）分别添加到github（Settings -> SSH and GPG keys）
+
+- 在~/.ssh目录下执行下面的命令添加账号：
+#+BEGIN_SRC sh
+  ssh-add -D
+  ssh-add ~/.ssh/id_rsa_weqiji
+  ssh-add ~/.ssh/id_rsa_dnxbjyj
+  ssh-add -l
+#+END_SRC
+注：如果 ~ssh-add~ 命令报错： ~Could not open a connection to your authentication agent.~ ，则可以通过执行命令： ~ssh-agent bash~ 来解决。
+
+- 创建一个文件：~/.ssh/config，其内容如下：
+# weqiji
+Host weqiji.github.com
+HostName github.com
+User weqiji
+IdentityFile ~/.ssh/id_rsa_weqiji
+# dnxbjyj
+Host dnxbjyj.github.com  
+HostName github.com
+User dnxbjyj
+IdentityFile ~/.ssh/id_rsa_dnxbjyj
+
+ssh -T git@weqiji.github.com
+~Hi weqiji! You've successfully authenticated, but GitHub does not provide shellaccess.~
+
+# 用git init创建本地仓库，然后设置局部git配置：
+git config user.name  "weqiji"
+git config user.email  "weqiji@126.com"
+
+git remote rm origin
+git remote add origin git@weqiji.github.com:weqiji/weqiji.github.io.git
+
+git pull origin master --allow-unrelated-histories
+touch test.txt
+git add -A
+git commit -m "test push"
+git push origin master
+
+
