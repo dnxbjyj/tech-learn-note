@@ -1,4 +1,4 @@
-* Tools
+* Tools#test
 ** git
 *** 多个github账号共存的配置
 假设有2个github账号： ~mygit1@gmail.com~ 和 ~mygit2@gmail.com~ ，想要在同一个电脑上同时管理这两个账号下的仓库。方法如下：
