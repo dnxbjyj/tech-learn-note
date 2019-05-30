@@ -159,19 +159,26 @@
   ;;;;---- save-excursion是一个special form，用于保存当前的各种上下文状态 【9.2.7 special form】【29.3 Excursions】
     ;; Switch to other window.
     (other-window 1)
+    ;;;;---- 切换到另一个window 
     ;; Do scroll operation.
     (ignore-errors
+    ;;;;---- 这是一个macro，用于忽略可能发生的异常，如果发生异常，直接返回nil
       (if (string-equal direction "up")
+      ;;;;---- 判断两个字符串的字面值是否相等，而忽略属性等，这里判断字符串是否等于"up"
           (if line
+          ;;;;---- 如果指定了行数，那么就往上滚动line行，否则往上滚动一屏
               (scroll-up line)
             (scroll-up))
         (if line
+        ;;;;---- 否则向下滚动
             (scroll-down line)
           (scroll-down))))
     ;; Switch back to current window.
     (other-window -1)
+    ;;;;---- 返回到现在的window
     ))
 
 (provide 'watch-other-window)
+;;;;---- 提供当前模块
 
 ;;; watch-other-window.el ends here
