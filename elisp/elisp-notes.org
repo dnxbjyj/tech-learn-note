@@ -1,0 +1,231 @@
+* 语法
+** 变量
+
+** 函数
+*** 基础
+**** message							   :function:
+- doc :: 
+message is a built-in function in ‘C source code’.
+(message FORMAT-STRING &rest ARGS)
+Display a message at the bottom of the screen.
+The message also goes into the ‘*Messages*’ buffer, if ‘message-log-max’
+is non-nil.  (In keyboard macros, that’s all it does.)
+Return the message.
+
+In batch mode, the message is printed to the standard error stream,
+followed by a newline.
+
+The first argument is a format control string, and the rest are data
+to be formatted under control of the string.  See ‘format-message’ for
+details.
+
+Note: (message "%s" VALUE) displays the string VALUE without
+interpreting format characters like ‘%’, ‘`’, and ‘'’.
+
+If the first argument is nil or the empty string, the function clears
+any existing message; this lets the minibuffer contents show.  See
+also ‘current-message’.
+- demo :: 
+#+BEGIN_SRC emacs-lisp
+  (message "hello, %s!" 'world)
+#+END_SRC
+#+RESULTS:
+: hello, world!
+
+**** length							   :function:
+- doc :: 
+length is a built-in function in ‘C source code’.
+(length SEQUENCE)
+Return the length of vector, list or string SEQUENCE.
+A byte-code function object is also allowed.
+If the string contains multibyte characters, this is not necessarily
+the number of bytes in the string; it is the number of characters.
+To get the number of bytes, use ‘string-bytes’.
+- demo :: 
+#+BEGIN_SRC emacs-lisp
+  (length '(1 2 3 4 5))
+#+END_SRC
+#+RESULTS:
+: 5
+
+*** 数据操作
+**** identity							   :function:
+- doc :: 
+identity is a built-in function in ‘C source code’.
+(identity ARG)
+Return the argument unchanged.
+- demo :: 
+#+BEGIN_SRC emacs-lisp
+  (identity '(1 2 3))
+#+END_SRC
+#+RESULTS:
+| 1 | 2 | 3 |
+**** mapconcat							   :function:
+- doc :: 
+mapconcat is a built-in function in ‘C source code’.
+(mapconcat FUNCTION SEQUENCE SEPARATOR)
+Apply FUNCTION to each element of SEQUENCE, and concat the results as strings.
+In between each pair of results, stick in SEPARATOR.  Thus, " " as
+SEPARATOR results in spaces between the values returned by FUNCTION.
+SEQUENCE may be a list, a vector, a bool-vector, or a string.
+- demo :: 
+#+BEGIN_SRC emacs-lisp
+  (mapconcat 'identity '("1" "2" "3") ", ")
+#+END_SRC
+#+RESULTS:
+: 1, 2, 3
+
+**** car							   :function:
+- doc :: 
+car is a built-in function in ‘C source code’.
+(car LIST)
+Return the car of LIST.  If arg is nil, return nil.
+Error if arg is not nil and not a cons cell.  See also ‘car-safe’.
+See Info node ‘(elisp)Cons Cells’ for a discussion of related basic
+Lisp concepts such as car, cdr, cons cell and list.
+- tip :: 
+经常和cdr搭配使用。
+- demo :: 
+#+BEGIN_SRC emacs-lisp
+  (car '(1 2 3))
+#+END_SRC
+#+RESULTS:
+: 1
+
+#+BEGIN_SRC emacs-lisp
+  (let ((lst '(1 2 3)) (sum 0))
+    (while lst
+      (setq num (car lst))
+      (setq sum (+ sum num))
+      (setq lst (cdr lst)))
+    (print sum))
+#+END_SRC
+#+RESULTS:
+: 6
+
+*** Buffer
+**** basic-save-buffer						    :command:
+- doc :: 
+basic-save-buffer is an interactive compiled Lisp function in
+‘files.el’.
+(basic-save-buffer &optional CALLED-INTERACTIVELY)
+Save the current buffer in its visited file, if it has been modified.
+The hooks ‘write-contents-functions’ and ‘write-file-functions’ get a chance
+to do the job of saving; if they do not, then the buffer is saved in
+the visited file in the usual way.
+Before and after saving the buffer, this function runs
+‘before-save-hook’ and ‘after-save-hook’, respectively.
+- tip :: 
+如果保存buffer的时候，buffer已经关联了文件，那么会自动保存buffer内容到此文件里。如果buffer没有关联文件，那么会提示输入要保存到的文件名。
+
+*** IO
+**** with-temp-message						      :macro:
+- doc :: 
+with-temp-message is a Lisp macro in ‘subr.el’.
+(with-temp-message MESSAGE &rest BODY)
+Display MESSAGE temporarily if non-nil while BODY is evaluated.
+The original message is restored to the echo area after BODY has finished.
+The value returned is the value of the last form in BODY.
+MESSAGE is written to the message log buffer if ‘message-log-max’ is non-nil.
+If MESSAGE is nil, the echo area and message log buffer are unchanged.
+Use a MESSAGE of "" to temporarily clear the echo area.
+- demo :: 
+#+BEGIN_SRC emacs-lisp
+  (with-temp-message "" (+ 1 2) (* 8 9))
+#+END_SRC
+#+RESULTS:
+: 72
+
+** 流程控制语句
+*** 代码结构
+**** progn 							:specialform:
+- doc :: 
+progn is a special form in ‘C source code’.
+(progn BODY...)
+Eval BODY forms sequentially and return value of last one.
+- demo :: 
+#+BEGIN_SRC emacs-lisp
+  (progn
+    (+ 1 3)
+    (* 3 6))
+#+END_SRC
+#+RESULTS:
+: 18
+
+
+*** 条件控制
+**** cond 							:specialform:
+- doc :: 
+cond is a special form in ‘C source code’.
+(cond CLAUSES...)
+Try each clause until one succeeds.
+Each clause looks like (CONDITION BODY...).  CONDITION is evaluated
+and, if the value is non-nil, this clause succeeds:
+then the expressions in BODY are evaluated and the last one’s
+value is the value of the cond-form.
+If a clause has one element, as in (CONDITION), then the cond-form
+returns CONDITION’s value, if that is non-nil.
+If no clause succeeds, cond returns nil.
+- tip :: 
+类似于其他编程语言中的switch语句。
+- demo :: 
+#+BEGIN_SRC emacs-lisp
+  (setq score 74)
+  (cond
+   ((>= score 85) (print "A"))  ;; 相当于switch语句中的case语句
+   ((>= score 75) (print "B"))
+   ((>= score 60) (print "C"))
+   (t (print "D")))  ;; 相当于switch语句中的default语句
+#+END_SRC
+#+RESULTS:
+: C
+
+**** when 							      :macro:
+- doc :: 
+when is a Lisp macro in ‘subr.el’.
+(when COND BODY...)
+If COND yields non-nil, do BODY, else return nil.
+When COND yields non-nil, eval BODY forms sequentially and return
+value of last one, or nil if there are none.
+- tip :: 
+当COND条件为非nil时，执行BODY，否则返回nil。
+- demo :: 
+#+BEGIN_SRC emacs-lisp
+    (when (> 1 2)
+      (print "aaa"))
+#+END_SRC
+#+RESULTS:
+
+#+BEGIN_SRC emacs-lisp
+  (when (< 1 2)
+    (print "bbb"))
+#+END_SRC
+#+RESULTS:
+: bbb
+
+**** unless 							      :macro:
+- doc :: 
+unless is a Lisp macro in ‘subr.el’.
+(unless COND BODY...)
+If COND yields nil, do BODY, else return nil.
+When COND yields nil, eval BODY forms sequentially and return
+value of last one, or nil if there are none.
+- tip :: 
+用法和when正好相反，当COND条件为nil时，才执行BODY，否则返回nil。
+- demo :: 
+#+BEGIN_SRC emacs-lisp
+  (unless (> 1 2)
+    (print "aaa"))
+#+END_SRC
+#+RESULTS:
+: aaa
+
+#+BEGIN_SRC emacs-lisp
+    (unless (< 1 2)
+      (print "bbb"))
+#+END_SRC
+#+RESULTS:
+
+** 数据结构
+
+* 有用代码片段
