@@ -181,12 +181,15 @@ avoid delete current indent space when you programming."
             (delete-trailing-whitespace)))))))
 
 (defun auto-save-enable ()
+  ;;;;----开启自动保存
   (interactive)
   (run-with-idle-timer auto-save-idle t #'auto-save-buffers)
+  ;;;;----启动定时任务进行保存
   (add-hook 'before-save-hook 'auto-save-delete-trailing-whitespace-except-current-line)
+  ;;;;----把自动删除行尾空白字符添加到保存hook
   (add-hook 'before-save-hook 'font-lock-flush)
   )
 
 (provide 'auto-save)
-
+;;;;----提供当前模块
 ;;; auto-save.el ends here

@@ -70,3 +70,12 @@
 
 (identity '(1 2 3))
 (mapconcat 'identity '("1" "2" "3") ", ")
+
+(defun hello (name greet)
+  (message "hello %s! %s, current time is: %s" name greet (format-time-string "%H:%M:%S"))
+  (sleep-for 3)
+  (message ""))
+
+(setq timer-obj (run-with-idle-timer 3 t 'hello "Tom" "how are you"))
+
+(font-lock-flush)

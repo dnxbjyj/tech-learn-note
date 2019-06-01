@@ -31,8 +31,7 @@ also ‘current-message’.
 #+END_SRC
 #+RESULTS:
 : hello, world!
-
-**** length							   :function:
+**** length 							   :function:
 - doc :: 
 length is a built-in function in ‘C source code’.
 (length SEQUENCE)
@@ -48,6 +47,39 @@ To get the number of bytes, use ‘string-bytes’.
 #+RESULTS:
 : 5
 
+**** provide							   :function:
+- doc :: 
+provide is a built-in function in ‘C source code’.
+
+(provide FEATURE &optional SUBFEATURES)
+
+Announce that FEATURE is a feature of the current Emacs.
+The optional argument SUBFEATURES should be a list of symbols listing
+particular subfeatures supported in this version of FEATURE.
+
+*** 编辑 
+**** add-hook							   :function:
+- doc :: 
+add-hook is a compiled Lisp function in ‘subr.el’.
+
+(add-hook HOOK FUNCTION &optional APPEND LOCAL)
+
+Add to the value of HOOK the function FUNCTION.
+FUNCTION is not added if already present.
+FUNCTION is added (if necessary) at the beginning of the hook list
+unless the optional argument APPEND is non-nil, in which case
+FUNCTION is added at the end.
+
+The optional fourth argument, LOCAL, if non-nil, says to modify
+the hook’s buffer-local value rather than its global value.
+This makes the hook buffer-local, and it makes t a member of the
+buffer-local value.  That acts as a flag to run the hook
+functions of the global value as well as in the local value.
+
+HOOK should be a symbol, and FUNCTION may be any valid function.  If
+HOOK is void, it is first set to nil.  If HOOK’s value is a single
+function, it is changed to a list of functions.
+
 *** 数据操作
 **** identity							   :function:
 - doc :: 
@@ -60,6 +92,7 @@ Return the argument unchanged.
 #+END_SRC
 #+RESULTS:
 | 1 | 2 | 3 |
+
 **** mapconcat							   :function:
 - doc :: 
 mapconcat is a built-in function in ‘C source code’.
@@ -102,6 +135,42 @@ Lisp concepts such as car, cdr, cons cell and list.
 #+END_SRC
 #+RESULTS:
 : 6
+
+*** 任务调度
+**** cancel-timer						   :function:
+- doc :: 
+cancel-timer is a compiled Lisp function in ‘timer.el’.
+(cancel-timer TIMER)
+Remove TIMER from the list of active timers.
+
+**** run-with-idle-timer					   :function:
+- doc :: 
+run-with-idle-timer is an interactive compiled Lisp function in
+‘timer.el’.
+
+(run-with-idle-timer SECS REPEAT FUNCTION &rest ARGS)
+
+Perform an action the next time Emacs is idle for SECS seconds.
+The action is to call FUNCTION with arguments ARGS.
+SECS may be an integer, a floating point number, or the internal
+time format returned by, e.g., ‘current-idle-time’.
+If Emacs is currently idle, and has been idle for N seconds (N < SECS),
+then it will call FUNCTION in SECS - N seconds from now.  Using
+SECS <= N is not recommended if this function is invoked from an idle
+timer, because FUNCTION will then be called immediately.
+
+If REPEAT is non-nil, do the action each time Emacs has been idle for
+exactly SECS seconds (that is, only once for each time Emacs becomes idle).
+
+This function returns a timer object which you can use in ‘cancel-timer’.
+- demo ::
+#+BEGIN_SRC emacs-lisp
+  (defun hello (name greet)
+    (message "hello %s! %s, current time is: %s" name greet (format-time-string "%H:%M:%S"))
+    (sleep-for 3)
+    (message ""))
+  (setq timer-obj (run-with-idle-timer 3 t 'hello "Tom" "how are you"))
+#+END_SRC
 
 *** Buffer
 **** basic-save-buffer						    :command:
@@ -151,7 +220,6 @@ Eval BODY forms sequentially and return value of last one.
 #+END_SRC
 #+RESULTS:
 : 18
-
 
 *** 条件控制
 **** cond 							:specialform:
@@ -227,5 +295,21 @@ value of last one, or nil if there are none.
 #+RESULTS:
 
 ** 数据结构
+
+* Hook
+** 基本函数
+** 编辑相关
+*** 文件
+**** before-save-hook					      :variable:hook:
+- doc :: 
+before-save-hook is a variable defined in ‘files.el’.
+Its value is
+(font-lock-flush auto-save-delete-trailing-whitespace-except-current-line)
+Original value was nil
+  This variable may be risky if used as a file-local variable.
+Documentation:
+Normal hook that is run before a buffer is saved to its file.
+Only used by ‘save-buffer’.
+You can customize this variable.
 
 * 有用代码片段
