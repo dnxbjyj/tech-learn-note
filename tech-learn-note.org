@@ -1,4 +1,21 @@
 * Tools
+** emacs
+*** 一些优秀的emacs博客/网站
+- EmacsChina :: 
+https://emacs-china.org/
+- manateelazycat :: 
+https://manateelazycat.github.io/
+- Sachachua :: 
+https://sachachua.com/blog/category/geek/emacs/
+- ergoemacs :: 
+http://ergoemacs.org/
+- RMS :: 
+https://stallman.org/
+*** 解决Window系统下emacs依赖的一些dll库找不到的问题
+- 方法1 :: 
+到网上下载（比如GNU Emacs官网FTP的windows deps压缩包）需要的dll库，然后放到emacs/bin目录下，最后修改 ~dynamic-library-alist~ 变量的值，把需要的dll库添加进去。
+- 方法2（推荐，省事） :: 
+直接下载已经安装好了各种依赖包的emacs使用： ~emacs-w64-25.3-O2-with-modules.7z~ （https://github.com/zklhp/emacs-w64/releases）
 ** git
 *** 多个github账号共存的配置
 假设有2个github账号： ~mygit1@gmail.com~ 和 ~mygit2@gmail.com~ ，想要在同一个电脑上同时管理这两个账号下的仓库。方法如下：

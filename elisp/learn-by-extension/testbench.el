@@ -1,3 +1,6 @@
+(push "xxx" dynamic-library-alist)
+(print dynamic-library-alist)
+
 (special-form-p 'today)
 (other-window 1)
 (other-buffer)
